@@ -1,6 +1,7 @@
 from models.Sensor import *
 from datetime import datetime
 import random
+import requests
 
 class Trading:
     def __init__(self):
@@ -25,3 +26,7 @@ class Trading:
 
     def get_daily_ema(self):
         return self.sensor.ema_daily()
+
+    def get_request(self):
+        response = requests.get("https://mecanicarubio.com/api/data/")
+        return response.json()
