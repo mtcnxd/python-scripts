@@ -22,7 +22,7 @@ class Trading:
             self.sensor.create(data)
         
         except Exception as e:
-            print(f"AN ERROR OCURRED WHEN SAVING DATA: {E}")
+            print(f"AN ERROR OCURRED WHEN SAVING DATA: {e}")
 
     def get_daily_ema(self):
         return self.sensor.ema_daily()
