@@ -3,7 +3,6 @@ from DataBase import *
 class Sensor:
     def __init__(self):
         self.table = "sensors"
-        
         self.database = DataBase()
     
     def find(self, id):
@@ -39,3 +38,9 @@ class Sensor:
         query = f"UPDATE {self.table} SET {columns} = {placeholders} WHERE id = {id}"
 
         return self.database.query(query, values)
+
+    # Custom query for load AVG
+
+    def ema_daily(self):
+        query = f"SELECT AVG(location) as avg FROM {self.table} WHERE created_at > NOW() - INTERVAL 1 DAY LIMIT 1"
+        return self.database.select_one(query)

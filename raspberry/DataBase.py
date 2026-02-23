@@ -12,6 +12,7 @@ class DataBase:
                 charset="utf8mb4",
             )
             self.cursor = self.connection.cursor(pymysql.cursors.DictCursor)
+        
         except Exception as e:
             print("AN ERROR OCURRED WHILE CONNECTING: {e}")
 
@@ -20,31 +21,26 @@ class DataBase:
 
     def select_all(self, query):
         try:
-            with self.cursor() as cursor:
-                cursor.execute(query)
-                return cursor.fetchall()
+            self.cursor.execute(query)
+            return self.cursor.fetchall()
 
         except Exception as e:
-            self.rollback()
             print(f"AN ERROR OCURRED WHILE EXECUTE QUERY: {e}")
             return None
 
     def select_one(self, query):
         try:
-            with self.cursor as cursor:
-                cursor.execute(query)
-                return cursor.fetchone()
+            self.cursor.execute(query)
+            return self.cursor.fetchone()
 
         except Exception as e:
-            self.rollback()
             print(f"AN ERROR OCURRED WHILE EXECUTE QUERY: {e}")
             return None
 
     def query(self, query, values):
         try:
-            with self.connection.cursor() as cursor:
-                cursor.execute(query, values)
-                self.connection.commit()
+            self.cursor.execute(query, values)
+            self.connection.commit()
         
         except Exception as e:
             print(f"AN ERROR OCURRED WHILE INSERT DATA: {e}")
