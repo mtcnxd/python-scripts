@@ -7,20 +7,22 @@ class DataBaseLite:
 
     def create_table(self):
         self.cursor.execute('''
-            CREATE TABLE IF NOT EXISTS users (
+            CREATE TABLE IF NOT EXISTS weather (
                 id INTEGER PRIMARY KEY,
-                name TEXT NOT NULL,
-                age INTEGER
+                time TEXT NOT NULL,
+                temperature INTEGER,
+                humidity INTEGER,
+                wind_speed INTEGER
             )
         ''')
         self.connection.commit()
 
-    def insert_data(self, name, age):
-        self.cursor.execute("INSERT INTO users (name, age) VALUES (?, ?)", (name, age))
+    def insert_data(self, time, temperature, humidity, wind_speed):
+        self.cursor.execute("INSERT INTO weather (time, temperature, humidity, wind_speed) VALUES (?, ?, ?, ?)", (time, temperature, humidity, wind_speed))
         self.connection.commit()
 
     def query_data(self):
-        self.cursor.execute("SELECT * FROM users")
+        self.cursor.execute("SELECT * FROM weather")
         rows = self.cursor.fetchall()
         return rows
 
