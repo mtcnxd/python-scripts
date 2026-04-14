@@ -23,20 +23,16 @@ if __name__ == "__main__":
     
     if weather_data is not None:
         for data in weather_data['properties']['timeseries']:
-            data_time = data['time']
-            air_temperature = data['data']['instant']['details']['air_temperature']
+            data_time         = data['time']
+            air_temperature   = data['data']['instant']['details']['air_temperature']
             relative_humidity = data['data']['instant']['details']['relative_humidity']
-            wind_speed = data['data']['instant']['details']['wind_speed']
-
-            print(f"The temperature at {data_time} will be {air_temperature} degrees and the relative humidity will be {relative_humidity}%")
-
+            wind_speed        = data['data']['instant']['details']['wind_speed']
+            
             sqlite.insert_data(data_time, air_temperature, relative_humidity, wind_speed)
-            time.sleep(0.05)
 
-
-
-    data = sqlite.query_data()
+    data = sqlite.query_fetch_all()
     sqlite.close()
 
     for row in data:
-        print(row)
+        print(f"{row['id']} | The temperature at {row['time']} will be {row['temperature']} degrees and the relative humidity will be {row['humidity']}%")
+        time.sleep(0.02)
