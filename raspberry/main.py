@@ -1,10 +1,13 @@
-from apis.Bitso import Bitso
-from apis.Telegram import Telegram
-from classes.Trading import Trading
+from apis import Bitso, Telegram
+from services import BitsoService
 from Helpers import *
+import logging
 
 bitso = Bitso()
-trading = Trading()
+trading = BitsoService()
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 if __name__ == "__main__" :
     book_info = bitso.get_book_info("btc_usdt")
@@ -13,11 +16,11 @@ if __name__ == "__main__" :
 
     percentage = calculate_percentage(book_info['last'], last_price['location'])
 
-    print(f"Last price: {to_currency(last_price['location'])}")
-    print(f"Current price: {to_currency(book_info['last'])}")
-    print(f"Daily AVG: {to_currency(daily_ema['avg'])}")
-    print(f"Percentage: {to_percentage(percentage)}")
-    
+    logger.info(f"Last price: {to_currency(last_price['location'])}")
+    logger.info(f"Current price: {to_currency(book_info['last'])}")
+    logger.info(f"Daily AVG: {to_currency(daily_ema['avg'])}")
+    logger.info(f"Percentage: {to_percentage(percentage)}")
+
     trading.create_data(book_info)
 
     Telegram().send_message(f"Current price: *{to_currency(book_info['last'])}* \n"

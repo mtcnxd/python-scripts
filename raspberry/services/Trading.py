@@ -3,7 +3,7 @@ from datetime import datetime
 import random
 import requests
 
-class Trading:
+class BitsoService:
     def __init__(self):
         self.sensor = Sensor()
 
