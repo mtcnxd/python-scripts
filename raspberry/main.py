@@ -6,10 +6,14 @@ import logging
 bitso = Bitso()
 trading = BitsoService()
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+logging.basicConfig(
+    filename='logs/output.log',
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+)
 
 if __name__ == "__main__" :
+    logger = logging.getLogger(__name__)
     book_info = bitso.get_book_info("btc_usdt")
     last_price = trading.get_last_price()
     daily_ema = trading.get_daily_ema()
