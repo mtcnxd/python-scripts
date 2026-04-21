@@ -26,6 +26,9 @@ class Bitso:
     def get_book_info(self, book):
         response = self.get_ticker()
 
+        if response is None:
+            return None
+
         for books in response['payload']:
             if books['book'] == book:
                 return books

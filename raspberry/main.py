@@ -15,6 +15,12 @@ logging.basicConfig(
 if __name__ == "__main__" :
     logger = logging.getLogger(__name__)
     book_info = bitso.get_book_info("btc_usdt")
+
+    if book_info is None:
+        Telegram().send_message(f"Error: No se pudo obtener la informacion del book")
+        logger.info(f"Error: No se pudo obtener la informacion del book")
+        exit(1)
+
     last_price = trading.get_last_price()
     daily_ema = trading.get_daily_ema()
 
