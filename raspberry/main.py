@@ -1,7 +1,7 @@
 from apis import Bitso, Telegram
 from services import BitsoService
 from Helpers import *
-#import logging
+import logging
 
 bitso = Bitso()
 trading = BitsoService()
@@ -11,6 +11,7 @@ trading = BitsoService()
 #    level=logging.INFO,
 #    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
 #)
+
 if __name__ == "__main__" :
     #logger = logging.getLogger(__name__)
     book_info = bitso.get_book_info("btc_usdt")
