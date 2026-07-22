@@ -15,6 +15,7 @@ class ApiClient:
         except Timeout:
             print(f"Request timed out for {endpoint}")
             return {"data": [], "error": "Request timed out"}
+
         except RequestException as e:
             print(f"Request error for {endpoint}: {e}")
             return {"data": [], "error": str(e)}
