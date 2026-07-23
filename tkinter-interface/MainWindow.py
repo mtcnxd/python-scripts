@@ -29,11 +29,11 @@ class MainWindow(Frame):
             self.clients = json_response['data']
         
         except Exception as e:
-            print(f"Error: {e}")
+            print(f"An error ocurred: {e}")
 
         Label(self.master, text="Clients").grid(row=0, column=0, sticky="n", padx=10, pady=10)
 
-        for client in json_response['data']:
+        for client in self.clients:
             self.listbox.insert(END, f"{client['id']} - {client['name']}")
 
         scrollbar = Scrollbar(self.master)

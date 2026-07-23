@@ -1,8 +1,8 @@
 import tkinter as tk
-from MainWindow import MainWindow
+from Views.MainWindow import MainWindow
 
 container = tk.Tk()
-container.title("Clients")
+container.title("Bitso Price")
 container.geometry("800x600")
 
 MainWindow(container)

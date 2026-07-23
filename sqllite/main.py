@@ -12,6 +12,7 @@ def get_weather_data():
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"
     }
     response = requests.get(url, headers=headers)
+    
     if response.status_code == 200:
         return json.loads(response.text)
     else:
@@ -20,15 +21,18 @@ def get_weather_data():
 if __name__ == "__main__":
     sqlite.create_table()
     weather_data = get_weather_data()
+
+    if weather_data is None:
+        print("Error al obtener los datos del clima")
+        raise Exception("Error al obtener los datos del clima")
     
-    if weather_data is not None:
-        for data in weather_data['properties']['timeseries']:
-            data_time         = data['time']
-            air_temperature   = data['data']['instant']['details']['air_temperature']
-            relative_humidity = data['data']['instant']['details']['relative_humidity']
-            wind_speed        = data['data']['instant']['details']['wind_speed']
-            
-            sqlite.insert_data(data_time, air_temperature, relative_humidity, wind_speed)
+    for data in weather_data['properties']['timeseries']:
+        data_time         = data['time']
+        air_temperature   = data['data']['instant']['details']['air_temperature']
+        relative_humidity = data['data']['instant']['details']['relative_humidity']
+        wind_speed        = data['data']['instant']['details']['wind_speed']
+        
+        sqlite.insert_data(data_time, air_temperature, relative_humidity, wind_speed)
 
     data = sqlite.query_fetch_all()
     sqlite.close()
