@@ -1,58 +1,119 @@
 import gi
 gi.require_version('Gtk', '4.0')
 from gi.repository import Gtk
+from Services import MainService
 
 class MainWindow(Gtk.ApplicationWindow):
     def __init__(self, app):
         super().__init__(application=app)
-        self.set_title("Hola mundo")
+        self.set_title("Raspberry Controller")
         self.set_default_size(800, 600)
 
-        self.box = Gtk.Box(
+        self.main_service = MainService()
+
+        # Main container for the window
+        box = Gtk.Box(
             orientation=Gtk.Orientation.VERTICAL,
-            spacing=10
+            spacing=10,
+            margin_top=20,
+            margin_bottom=20,
+            margin_start=30,
+            margin_end=30
         )
+
+        # Row 1
 
         button_row = Gtk.Box(
             orientation=Gtk.Orientation.HORIZONTAL,
+            hexpand=True,
+            halign=Gtk.Align.FILL,
             spacing=10
         )
 
-        button_row.label_button = Gtk.Label(label="Press this button to activate the LED")
-        button_row.label_button.set_halign(Gtk.Align.START)
-        button_row.append(button_row.label_button)
+        label_button = Gtk.Label(label="Press this button to get domainInfo")
+        label_button.set_hexpand(True)
+        label_button.set_halign(Gtk.Align.START)
 
-        button_row.button = Gtk.Button(label="LED ON")
-        button_row.button.set_halign(Gtk.Align.END)
-        button_row.button.set_valign(Gtk.Align.CENTER)
-        button_row.button.connect("clicked", self.on_button_clicked)
-        button_row.append(button_row.button)
+        button = Gtk.Button(label="Domain Info")
+        button.connect("clicked", self.get_domain_info)
 
-        self.box.append(button_row)
+        button_row.append(label_button)
+        button_row.append(button)
+
+        box.append(button_row)
+
+        # Row 2
+
+        button_row = Gtk.Box(
+            orientation=Gtk.Orientation.HORIZONTAL,
+            hexpand=True,
+            halign=Gtk.Align.FILL,
+            spacing=10
+        )
+
+        label_button = Gtk.Label(label="Press this button to activate the LED")
+        label_button.set_hexpand(True)
+        label_button.set_halign(Gtk.Align.START)
+
+        button = Gtk.Button(label="LED ON")
+        button.connect("clicked", self.main_service.on_button_clicked)
+
+        button_row.append(label_button)
+        button_row.append(button)
+
+        box.append(button_row)
+
+        # Row 3
 
         switch_row = Gtk.Box(
             orientation=Gtk.Orientation.HORIZONTAL,
+            hexpand=True,
+            halign=Gtk.Align.FILL,
             spacing=10
         )
 
-        switch_row.switch = Gtk.Switch()
-        switch_row.switch.set_active(False)
-        switch_row.switch.connect("notify::active", self.on_switch_changed)
-        switch_row.append(switch_row.switch)
+        label_switch = Gtk.Label(label="Switch to turn on/off the LED")
+        label_switch.set_hexpand(True)
+        label_switch.set_halign(Gtk.Align.START)
 
-        self.box.append(switch_row)
+        switch = Gtk.Switch()
+        switch.set_active(False)
+        switch.connect("notify::active", self.main_service.on_switch_changed)
+        
+        switch_row.append(label_switch)
+        switch_row.append(switch)
 
-        self.set_child(self.box)
+        box.append(switch_row)
 
-    def on_button_clicked(self, button):
-        print("Button clicked")
+        # Row 4
 
-    def on_switch_changed(self, switch, gparam):
-        if switch.get_active():
-            print("Switch ON")
-        else:
-            print("Switch OFF")
+        text_row = Gtk.Box(
+            orientation=Gtk.Orientation.HORIZONTAL,
+            hexpand=True,
+            halign=Gtk.Align.FILL,
+            spacing=10
+        )
 
+        label_text = Gtk.Label(label="Results of the domain info")
+        label_text.set_hexpand(True)
+        label_text.set_halign(Gtk.Align.START)
+
+        self.text_box = Gtk.Entry()
+        self.text_box.set_hexpand(True)
+        self.text_box.set_halign(Gtk.Align.FILL)
+        self.text_box.set_editable(False)
+
+        text_row.append(label_text)
+        text_row.append(self.text_box)
+
+        box.append(text_row)
+
+        # Assign all elements to the main window
+        self.set_child(box)
+
+    def get_domain_info(self, button):
+        response = self.main_service.on_button_clicked(button)
+        self.text_box.set_text(str(response))
 
 class MyApp(Gtk.Application):
     def do_activate(self):
