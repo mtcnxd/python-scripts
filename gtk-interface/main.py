@@ -56,7 +56,7 @@ class MainWindow(Gtk.ApplicationWindow):
         label_button.set_halign(Gtk.Align.START)
 
         button = Gtk.Button(label="LED ON")
-        button.connect("clicked", self.main_service.on_button_clicked)
+        button.connect("clicked", self.get_check_domain)
 
         button_row.append(label_button)
         button_row.append(button)
@@ -114,6 +114,10 @@ class MainWindow(Gtk.ApplicationWindow):
     def get_domain_info(self, button):
         response = self.main_service.on_button_clicked(button)
         self.text_box.set_text(str(response))
+        
+    def get_check_domain(self, button):
+        # response = self.main_service.get_check_domain(button)
+        self.text_box.set_text("Hola mundo")
 
 class MyApp(Gtk.Application):
     def do_activate(self):
