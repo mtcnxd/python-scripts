@@ -1,10 +1,12 @@
 from .ApiService import ApiService
+from .DataBaseLite import DataBaseLite
 from gi.repository import GLib
 import threading
 
 class MainService:
     def __init__(self):
         self.api_service = ApiService()
+        self.database = DataBaseLite()
         
     def get_check_domain(self, button):
         try:

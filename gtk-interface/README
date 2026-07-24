@@ -1,0 +1,11 @@
+# Install Service
+
+sudo nano /etc/systemd/system/mydaemon.service
+
+# Recargar systemd
+
+sudo systemctl daemon-reload
+
+# Start Service
+
+sudo systemctl start mydaemon

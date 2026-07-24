@@ -1,0 +1,17 @@
+[Unit]
+Description=Mi Daemon en Python
+After=network.target
+
+[Service]
+Type=simple
+
+User=marcos
+WorkingDirectory=/home/marcos/Documents
+
+ExecStart=/usr/bin/python3 /home/marcos/Documents/Daemon/led-blinker.py
+
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

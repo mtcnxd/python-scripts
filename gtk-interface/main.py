@@ -1,14 +1,17 @@
 import gi
 
 gi.require_version('Gtk', '4.0')
+
 from gi.repository import Gtk
 from Services import MainService
+from gi.repository import GLib
 
 class MainWindow(Gtk.ApplicationWindow):
     def __init__(self, app):
         super().__init__(application=app)
         self.set_title("Raspberry Controller")
         self.set_default_size(800, 600)
+        self.counter = 0
 
         self.main_service = MainService()
 
@@ -142,8 +145,54 @@ class MainWindow(Gtk.ApplicationWindow):
 
         box.append(row_5)
 
+        # Row 6
+
+        row_6 = Gtk.Box(
+            orientation=Gtk.Orientation.HORIZONTAL,
+            hexpand=True,
+            halign=Gtk.Align.FILL,
+            spacing=10
+        )
+
+        actions = [
+            'Create Domain',
+            'Delete Domain'
+        ]
+
+        dropdown_actions = Gtk.DropDown.new_from_strings(actions)
+        row_6.append(dropdown_actions)
+
+        box.append(row_6)
+
+        # Row 7 
+
+        row_7 = Gtk.Box(
+            orientation=Gtk.Orientation.HORIZONTAL,
+            hexpand=True,
+            halign=Gtk.Align.FILL,
+            spacing=10
+        )
+
+        self.entry_counter = Gtk.Entry()
+        self.entry_counter.set_hexpand(True)
+
+        row_7.append(self.entry_counter)
+
+        box.append(row_7)
+
         # Assign all elements to the main window
         self.set_child(box)
+
+        # Start background Job
+        self.background_job()
+
+    def background_job(self):
+        print(f"Counter: {self.counter}")
+        
+        self.entry_counter.set_text(str(self.counter))
+
+        self.counter += 1 
+        GLib.timeout_add(500, self.background_job)
 
     def get_domain_info(self, button):
         domain_name = self.entry_domain_name.get_text()
