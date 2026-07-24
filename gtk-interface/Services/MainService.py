@@ -1,4 +1,6 @@
 from .ApiService import ApiService
+from gi.repository import GLib
+import threading
 
 class MainService:
     def __init__(self):
@@ -10,21 +12,25 @@ class MainService:
                 "command": "getCheckDomain",
                 "domain": "ecoflamme.de"
             })
-        except Exeption as error:
+        except Exception as error:
+            print(error)
             return None
 
-    def on_button_clicked(self, button):
-        try:        
-            response = self.api_service.get("api/index.php",{
-                "command": "domainInfo",
-                "domain": "ecoflamme.de"
-            })
+    def get_domain_info(self, domain_name, callback):
+        def thread_target():
+            try:
+                response = self.api_service.get("api/index.php",{
+                    "command": "domainInfo",
+                    "domain": domain_name
+                })
 
-            return response
+                GLib.idle_add(callback, response)
 
-        except Exception as e:
-            print(e)
-            return None
+            except Exception as e:
+                print(f"ERROR: {e}")
+                GLib.idle_add(callback, None)
+
+        threading.Thread(target=thread_target, daemon=True).start()
 
     def on_switch_changed(self, switch, gparam):
         if switch.get_active():

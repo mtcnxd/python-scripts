@@ -1,5 +1,3 @@
-import json
-import asyncio
 import requests
 
 class ApiService:
