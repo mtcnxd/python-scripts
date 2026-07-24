@@ -1,6 +1,6 @@
 # Install Service
 
-sudo nano /etc/systemd/system/mydaemon.service
+sudo nano /etc/systemd/system/led-blinker.service
 
 # Recargar systemd
 
@@ -8,4 +8,8 @@ sudo systemctl daemon-reload
 
 # Start Service
 
-sudo systemctl start mydaemon
+sudo systemctl start led-blinker
+
+# Hacer que el servicio se inicie con el arranque
+
+sudo systemctl enable led-blinker
