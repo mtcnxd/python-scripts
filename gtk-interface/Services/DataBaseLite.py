@@ -6,7 +6,7 @@ class DataBaseLite:
         self.connection.row_factory = sqlite3.Row
         self.cursor = self.connection.cursor()
 
-    def create_table(self):
+    def create_migrations(self):
         self.cursor.execute('''
             CREATE TABLE IF NOT EXISTS settings (
                 id INTEGER PRIMARY KEY,
@@ -14,6 +14,18 @@ class DataBaseLite:
                 value VARCHAR(50)
             )
         ''')
+
+        self.connection.commit()
+
+        self.cursor.execute('''
+            CREATE TABLE IF NOT EXISTS temperature (
+                id INTEGER PRIMARY KEY,
+                time DATETIME,
+                temperature DECIMAL(10, 2),
+                humidity DECIMAL(10, 2)
+            )
+        ''')
+
         self.connection.commit()
 
     def insert_data(self, name, value):
