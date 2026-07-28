@@ -18,13 +18,11 @@ class ArduinoService:
 			decoded_data = bytes_received.decode().rstrip('\r\n')
 			self.data = decoded_data.split(',')
 
-			print(f"Debug => Data: {self.data} | type: {type(self.data)}")
+			#print(f"Debug => Data: {self.data} | type: {type(self.data)}")
 
 			return self.data
 
 	def send_data(self, value):
-		print(value)
-
 		if self.port:
 			self.port.write(value.encode())
 			self.port.flush()

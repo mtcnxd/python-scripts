@@ -113,12 +113,18 @@ class MainWindow(Gtk.ApplicationWindow):
             spacing=10
         )
 
-        button_send = Gtk.Button(label="Send")
-        button_send.set_hexpand(True)
-        button_send.set_halign(Gtk.Align.END)
-        button_send.connect("clicked", self.send_data)
+        button_start = Gtk.Button(label="Start")
+        button_start.set_hexpand(True)
+        button_start.set_halign(Gtk.Align.END)
+        button_start.connect("clicked", self.start)
 
-        row_3.append(button_send)
+        button_cancel = Gtk.Button(label="Cancel")
+        button_cancel.set_hexpand(True)
+        button_cancel.set_halign(Gtk.Align.END)
+        button_cancel.connect("clicked", self.cancel)
+
+        row_3.append(button_start)
+        row_3.append(button_cancel)
 
         box.append(row_3)
 
@@ -155,20 +161,27 @@ class MainWindow(Gtk.ApplicationWindow):
         if self.read_sensor:
             data = self.arduino.get_data()
 
-            self.entry_value_read.set_text(str(data[0]))
+            if data:
+                # Print the counter
+                print(data[0])
 
-            GLib.timeout_add(500, self.background_job)
+                # Print the value
+                self.entry_value_read.set_text(str(data[1]))
+
+            GLib.timeout_add(100, self.background_job)
 
     def start_reading(self, switch, pspec):
         self.read_sensor = switch.get_active()
         if self.read_sensor:
             self.background_job()
 
-    def send_data(self, button):
-        value = "1"
-
+    def start(self, button):
         if self.arduino:
-            self.arduino.send_data(value)
+            self.arduino.send_data("A")
+
+    def cancel(self, button):
+        if self.arduino:
+            self.arduino.send_data("B")
 
 class MyApp(Gtk.Application):
     def __init__(self):
