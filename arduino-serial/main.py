@@ -153,8 +153,9 @@ class MainWindow(Gtk.ApplicationWindow):
 
     def background_job(self):
         if self.read_sensor:
-            self.entry_value_read.set_text(str(self.counter))
-            self.counter += 1
+            data = self.arduino.get_data()
+
+            self.entry_value_read.set_text(str(data[0]))
 
             GLib.timeout_add(500, self.background_job)
 

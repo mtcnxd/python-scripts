@@ -12,15 +12,15 @@ class ArduinoService:
 	def connect(self, port="/dev/ttyUSB0", baudrate=9600):
 		self.port = Serial(port=port, baudrate=baudrate, timeout=5)
 
-	def get_data(self) -> str:
+	def get_data(self) -> list:
 		if self.port.in_waiting > 0:
 			bytes_received = self.port.readline()
 			decoded_data = bytes_received.decode().rstrip('\r\n')
 			self.data = decoded_data.split(',')
 
-			self.temp_value.set(f"Debug: {self.data}")
+			print(f"Debug => Data: {self.data} | type: {type(self.data)}")
 
-			return self.data[0]
+			return self.data
 
 	def send_data(self, value):
 		print(value)
