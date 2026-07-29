@@ -1,5 +1,5 @@
 import time
-from Services.AHT10Service import AHT10Service
+from services.AHT10Service import AHT10Service
 
 sensor = AHT10Service()
 
