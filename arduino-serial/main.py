@@ -4,15 +4,15 @@ gi.require_version('Gtk', '4.0')
 gi.require_version('Notify', '0.7')
 
 from gi.repository import Gtk, GLib, Notify
-from Services import ArduinoService
+from Services import SerialPort
 
 class MainWindow(Gtk.ApplicationWindow):
     def __init__(self, app):
         super().__init__(application=app)
         self.set_title("Arduino Serial Port")
         self.set_default_size(800, 600)
+        self.store_enabled = False
         self.counter = 0
-        self.read_sensor = False
 
         # Main container for the window
         box = Gtk.Box(
@@ -43,7 +43,7 @@ class MainWindow(Gtk.ApplicationWindow):
         ]
 
         self.baudrate_dropdown = Gtk.DropDown.new_from_strings(list_values)
-        self.baudrate_dropdown.connect("notify::active", self.start_reading)
+        self.baudrate_dropdown.connect("notify::active", self.store_data)
 
         button_connect = Gtk.Button(label="Connect")
         button_connect.connect("clicked", self.connect)
@@ -71,13 +71,13 @@ class MainWindow(Gtk.ApplicationWindow):
             spacing=10
         )
 
-        label_switch = Gtk.Label(label="Enable arduino reading")
+        label_switch = Gtk.Label(label="Enable store data")
         label_switch.set_hexpand(True)
         label_switch.set_halign(Gtk.Align.START)
 
         switch = Gtk.Switch()
         switch.set_active(False)
-        switch.connect("notify::active", self.start_reading)
+        switch.connect("notify::active", self.store_data)
         
         row_1.append(label_switch)
         row_1.append(switch)
@@ -109,18 +109,14 @@ class MainWindow(Gtk.ApplicationWindow):
         row_3 = Gtk.Box(
             orientation=Gtk.Orientation.HORIZONTAL,
             hexpand=True,
-            halign=Gtk.Align.FILL,
+            halign=Gtk.Align.END,
             spacing=10
         )
 
         button_start = Gtk.Button(label="Start")
-        button_start.set_hexpand(True)
-        button_start.set_halign(Gtk.Align.END)
         button_start.connect("clicked", self.start)
 
         button_cancel = Gtk.Button(label="Cancel")
-        button_cancel.set_hexpand(True)
-        button_cancel.set_halign(Gtk.Align.END)
         button_cancel.connect("clicked", self.cancel)
 
         row_3.append(button_start)
@@ -137,8 +133,12 @@ class MainWindow(Gtk.ApplicationWindow):
 
         try:
             # Start arduino service
-            self.arduino = ArduinoService()
-            self.arduino.connect(port="/dev/ttyUSB0", baudrate=baudrate)
+            self.serial_port = SerialPort()
+            self.serial_port.connect(port="/dev/ttyUSB0", baudrate=baudrate)
+            Gtk.AlertDialog(
+                message="Success",
+                detail="Arduino connected successfully",
+            ).show()
 
         except Exception as e:
             Notify.init("Arduino Serial")
@@ -150,38 +150,48 @@ class MainWindow(Gtk.ApplicationWindow):
             )
             notification.show()
 
-            dialog = Gtk.AlertDialog(
+            Gtk.AlertDialog(
                 message="Port not found",
-                detail="Error al conectar con Arduino"
-            )
-
-            dialog.show()
+                detail=f"Error: {e}"
+            ).show()
 
     def background_job(self):
-        if self.read_sensor:
-            data = self.arduino.get_data()
+        try:
+            data = self.serial_port.get_data()
 
             if data:
-                # Print the counter
-                print(data[0])
+                count = str(data[0])
+                value = str(data[1])
 
-                # Print the value
-                self.entry_value_read.set_text(str(data[1]))
+                # Print values
+                self.entry_value_read.set_text(value)
+
+                # Save data
+                if self.store_enabled:
+                    self.serial_port.save_data(count, value)
 
             GLib.timeout_add(100, self.background_job)
+        
+        except Exception as e:
+            print(f"Error: {e}")
 
-    def start_reading(self, switch, pspec):
-        self.read_sensor = switch.get_active()
-        if self.read_sensor:
-            self.background_job()
+            Gtk.AlertDialog(
+                message="An error was ocurred",
+                detail=f"Error: {e}"
+            ).show()
+
+    def store_data(self, switch, pspec):
+        print(f"Store data: {switch.get_active()}")
+        self.store_enabled = switch.get_active()
 
     def start(self, button):
-        if self.arduino:
-            self.arduino.send_data("A")
+        if self.serial_port:
+            self.serial_port.send_data("A")
+            self.background_job()
 
     def cancel(self, button):
-        if self.arduino:
-            self.arduino.send_data("B")
+        if self.serial_port:
+            self.serial_port.send_data("B")
 
 class MyApp(Gtk.Application):
     def __init__(self):
