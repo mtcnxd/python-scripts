@@ -15,11 +15,11 @@ try:
 
 except Exception as error:
 	print(error)
-	pass
+
 
 finally:
 	sensor.close()
 
 
 if __name__ == "__main__":
-    main()
+    pass
