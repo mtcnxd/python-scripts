@@ -6,7 +6,7 @@ import asyncio
 
 class ProjectService:
     def __init__(self):
-        url = "http://www.mecanicarubio.com/api"
+        self.url = "http://www.mecanicarubio.com/api"
         
     def start(self, number) -> float:
         return number * 2.4

@@ -1,4 +1,4 @@
-from Services.ProjectService import ProjectService
+from services import ProjectService
 import telegram_send
 import asyncio
 
