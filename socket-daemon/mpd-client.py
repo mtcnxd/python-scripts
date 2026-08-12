@@ -1,48 +1,43 @@
-import socket
-from time import sleep
+from classes.MPDClient import MPDClient
+import time
 
-HOST = '127.0.0.1'
-PORT = 6600
+mpd = MPDClient('uconsole.local', 6600)
 
-def mpd_send_command(client, command):
-    client.sendall(f"{command}\n").encode()
+def ticks_ms():
+    return time.monotonic_ns()
 
-    response = b''
+# Main code
+
+interval = 1000
+last_millis = 0
+
+try:
+    mpd.connect()
 
     while True:
-        data = client.recv(4096)
-        response += data
+        current_millis = ticks_ms()
+        result = (current_millis - last_millis) / 1_000_000
+        
+        if result > interval:
+            last_millis = current_millis
 
-        if b'\nOK\n' in response:
-            break
+            current_status = mpd.get_status()
+            is_playing = current_status.get('state')
 
-        return response.decode()
+            print(f"Estado:  {current_status.get('state')}")
+            print(f"Tiempo:  {current_status.get('elapsed')} / {current_status.get('duration')}")
 
-def mpd_parse_response(response):
-    data = {}
-    for line in response.splitlines():
-        if ':' in line:
-            key, value = line.split(':', 1)
-            data[key] = value.strip()
-
-    return data
-
-
-with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as client:
-    try:
-        client.connect((HOST, PORT))
-
-        while True:
-            client.sendall(b'currentsong\n')
-            response = client.recv(1024).decode()
-
-            current_track = mpd_parse_response(response)
-
-            print(f"Artista: {current_track.get('Artist', 'Desconocido')}")
-            print(f"Album: {current_track.get('Album', 'Desconocido')}")
-            print(f"Titulo: {current_track.get('Title', 'Desconocido')}")
+            song = mpd.get_track_info()
+            print(f"Artista: {song.get('Artist', 'Desconocido')}")
+            print(f"Album:   {song.get('Album', 'Desconocido')}")
+            print(f"Titulo:  {song.get('Title', 'Desconocido')}")
             print("="*30)
-            sleep(1)
 
-    except Exception as error:
-        print(error)
+            if is_playing == 'play':
+                mpd.toggle_play_pause('pause')
+            
+            if is_playing == 'pause':
+                mpd.toggle_play_pause('play')
+
+except Exception as error:
+    print(f"MPD Client error: {error}")
