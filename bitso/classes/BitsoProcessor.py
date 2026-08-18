@@ -16,12 +16,9 @@ class BitsoProcessor:
 
 		return book_info['last']
 
-	def last_price(self):
-		return self.sqllite.last()
-
 	def get_table_info(self) -> dict:
 		current_price = self.current_price()
-		last_price = self.last_price()
+		last_price = self.sqllite.last()
 
 		self.sqllite.insert_data({
 			'price': current_price,
