@@ -6,7 +6,6 @@ class DataBaseLite:
         self.cursor = self.connection.cursor()
 
     def __del__(self):
-        print(f"Connection closed")
         self.close()
 
     def create_table(self):
