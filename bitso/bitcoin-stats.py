@@ -6,10 +6,20 @@ logger = Datalog('backup.log')
 console = Console()
 processor = BitsoProcessor()
 
-if __name__ == "__main__":
+def init():
 	try:
 		table = processor.table()
 		console.print(table)
+
+		currencies = ['bitcoin', 'etherium', 'bat', 'solana', 'litecoin', 'dutch']
+
+		for currency in currencies:
+			currency = processor.set_currency({
+				'price': '100',
+				'book': currency + '_mxn'
+			})
+
+			# console.print(currency.price)
 
 	except ApiException as error:
 		logger.write(f"API Error: {error}")
@@ -21,3 +31,8 @@ if __name__ == "__main__":
 
 	finally:
 		logger.close()
+		exit(1)
+
+
+if __name__ == '__main__':
+	init()

@@ -1,12 +1,19 @@
 from classes import DataBaseLite, Bitso
 from rich.table import Table
 from datetime import datetime
+from Protocols.Currency import Currency
 
 class BitsoProcessor:
 	def __init__(self):
 		self.sqllite = DataBaseLite()
 		self.sqllite.create_table()
 		self.bitso = Bitso()
+
+	def set_currency(self, values: dict) -> Currency:
+		currency = Currency()
+		currency.set_price(values['price'])
+		currency.set_book(values['book'])
+		return currency
 
 	def current_price(self) -> str:
 		book_info = self.bitso.get_book_info("btc_usdt")
