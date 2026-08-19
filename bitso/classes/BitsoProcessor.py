@@ -48,7 +48,7 @@ class BitsoProcessor:
 	def table(self) -> Table:
 		table_info = self.get_table_info()
 
-		table = Table(title="Bitcoin Stats", style="bold")
+		table = Table()
 
 		table.add_column("Name", style="dim")
 		table.add_column("Value")

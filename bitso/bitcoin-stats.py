@@ -8,18 +8,33 @@ processor = BitsoProcessor()
 
 def init():
 	try:
-		table = processor.table()
-		console.print(table)
+		console.print("SELECT AN OPTION:\n")
+		console.print("[1] Create currency")
+		console.print("[2] Bitcoin stats")
+		console.print("[3] Close program")
+		option = input("OPCION:")
 
-		currencies = ['bitcoin', 'etherium', 'bat', 'solana', 'litecoin', 'dutch']
+		match option:
+			case '1':
+				values = {
+					"price" : input("Price: "),
+					"book" : input("Book: ")
+				}
 
-		for currency in currencies:
-			currency = processor.set_currency({
-				'price': '100',
-				'book': currency + '_mxn'
-			})
+				currency = processor.set_currency(values)
+				console.print(f"Currency created successfully:\n" 
+							  f"Price: ${currency.price}\n"
+							  f"Book: {currency.book}\n", style="green")
+				return
 
-			# console.print(currency.price)
+			case '2':
+				table = processor.table()
+				console.print(table)
+				return
+
+			case '3':
+				exit(1)
+				return
 
 	except ApiException as error:
 		logger.write(f"API Error: {error}")
