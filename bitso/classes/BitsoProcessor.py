@@ -6,7 +6,7 @@ from Protocols.Currency import Currency
 class BitsoProcessor:
 	def __init__(self):
 		self.sqllite = DataBaseLite()
-		self.sqllite.create_table()
+		self.sqllite.create_tables()
 		self.bitso = Bitso()
 
 	def set_currency(self, values: dict) -> Currency:

@@ -3,21 +3,27 @@ from Exceptions import ApiException
 
 class Bitso:
     def __init__(self):
-        self.url = "https://api-stage.bitso.com/api/v3/ticker"
+        self.base_url = "https://api-stage.bitso.com"
 
-    def get_ticker(self) -> dict:
-        response = requests.get(self.url)
+    def _get_ticker(self) -> dict:
+        response = requests.get(f"{self.base_url}/api/v3/ticker")
 
         if not response:
-            raise ApiException("Endpoint connection failed")
+            raise ApiException(f"Endpoint connection failed: {response.text}")
 
         return response.json()
 
     def get_book_info(self, book) -> dict:
-        response = self.get_ticker()
+        response = self._get_ticker()
 
         for books in response['payload']:
             if books['book'] == book:
                 return books
 
         raise ApiException(f"Book {book} not found")
+
+    def get_orders(self) -> dict:
+        pass
+
+    def get_trades(self) -> dict:
+        pass

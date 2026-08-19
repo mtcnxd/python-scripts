@@ -6,6 +6,9 @@ class Datalog:
         self.filename = filename
         self.file = None
 
+    def __del__(self):
+        self.close()
+
     def write(self, line):
         try:
             self.file = open(self.filename,'a')
