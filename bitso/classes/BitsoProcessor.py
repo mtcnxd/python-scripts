@@ -48,6 +48,9 @@ class BitsoProcessor:
 	def table(self) -> Table:
 		table_info = self.get_table_info()
 
+		last_price = float(table_info['last_price']['price'])
+		current_price = float(table_info['current_price']['price'])
+
 		table = Table()
 
 		table.add_column("Name", style="dim")
@@ -55,23 +58,22 @@ class BitsoProcessor:
 		table.add_column("Time")
 
 		table.add_row("Current Price", 
-			self._to_currency(table_info['current_price']['price']),
-			table_info['current_price']['time'], 
-			style="red"
+			self._to_currency(current_price),
+			table_info['current_price']['time']
 			)
 		
 		table.add_row("Last Price", 
-			self._to_currency(table_info['last_price']['price']),
+			self._to_currency(last_price),
 			table_info['last_price']['time']
 			)
 
-		change = (float(table_info['current_price']['price']) - float(table_info['last_price']['price']))
+		change = (current_price - last_price)
+		percentage = (change / current_price)
 
-		percentage = change / table_info['last_price']['price']
-
-		table.add_row("Change from last price", 
+		table.add_row("Change", 
 			self._to_currency(change),
-			self._to_percentage(percentage)
+			self._to_percentage(percentage),
+			style="red" if change < 0 else "green"
 			)
 
 		return table

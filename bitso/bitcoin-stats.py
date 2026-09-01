@@ -1,6 +1,7 @@
 from classes import Datalog, BitsoProcessor
 from Exceptions import ApiException
 from rich.console import Console
+import notify2
 
 logger = Datalog('backup.log')
 console = Console()
@@ -8,10 +9,10 @@ processor = BitsoProcessor()
 
 def init():
 	try:
-		console.print("SELECT AN OPTION:\n")
+		console.print("SELECT OPTION:\n")
 		console.print("[1] Create currency")
 		console.print("[2] Bitcoin stats")
-		console.print("[3] Close program")
+		console.print("[3] Close program \n")
 		option = input("OPCION:")
 
 		match option:
@@ -33,8 +34,11 @@ def init():
 				return
 
 			case '3':
+				notify2.init("bitcoin-stats")
+				notify = notify2.Notification("Closing program", "Saliendo de la app Bitcoin stats")
+				notify.show()
+
 				exit(1)
-				return
 
 	except ApiException as error:
 		logger.write(f"API Error: {error}")
