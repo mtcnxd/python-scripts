@@ -62,7 +62,7 @@ class DataBaseLite:
         self.connection.commit()
 
     def insert_data(self, data):
-        price = data['price']
+        price      = data['price']
         created_at = data['created_at']
         self.cursor.execute("INSERT INTO bitso_data (price, created_at) VALUES (?, ?)", (price, created_at))
 

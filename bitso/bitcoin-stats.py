@@ -9,6 +9,10 @@ processor = BitsoProcessor()
 
 def init():
 	try:
+		table = processor.table()
+		console.print(table)
+
+		'''
 		console.print("SELECT OPTION:\n")
 		console.print("[1] Create currency")
 		console.print("[2] Bitcoin stats")
@@ -39,6 +43,7 @@ def init():
 				notify.show()
 
 				exit(1)
+		'''
 
 	except ApiException as error:
 		logger.write(f"API Error: {error}")

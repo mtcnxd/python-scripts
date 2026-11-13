@@ -29,7 +29,7 @@ class BitsoProcessor:
 
 		self.sqllite.insert_data({
 			'price': current_price,
-			'created_at': datetime.now().strftime("%H:%M:%S")
+			'created_at': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 		})
 
 		self.sqllite.commit_changes()
@@ -55,26 +55,26 @@ class BitsoProcessor:
 
 		table.add_column("Name", style="dim")
 		table.add_column("Value")
-		table.add_column("Time")
+		table.add_column("Date Time")
 
 		table.add_row("Current Price", 
 			self._to_currency(current_price),
 			table_info['current_price']['time']
-			)
+		)
 		
 		table.add_row("Last Price", 
 			self._to_currency(last_price),
 			table_info['last_price']['time']
-			)
+		)
 
-		change = (current_price - last_price)
-		percentage = (change / current_price)
+		change : float = (current_price - last_price)
+		percentage: float = (change / last_price) * 100
 
 		table.add_row("Change", 
 			self._to_currency(change),
 			self._to_percentage(percentage),
 			style="red" if change < 0 else "green"
-			)
+		)
 
 		return table
 
