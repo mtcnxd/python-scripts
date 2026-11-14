@@ -37,7 +37,7 @@ class BitsoProcessor:
 		return {
 			'current_price': {
 				"price": current_price,
-				"time" : datetime.now().strftime("%H:%M:%S")
+				"time" : datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 			},
 			'last_price': {
 				"price": last_price[1],
