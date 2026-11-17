@@ -9,8 +9,11 @@ processor = BitsoProcessor()
 
 def init():
 	try:
-		table = processor.table()
-		console.print(table)
+		ticker = processor.table_ticker()
+		console.print(ticker)
+
+		balance = processor.table_balance()
+		console.print(balance)
 
 		'''
 		console.print("SELECT OPTION:\n")

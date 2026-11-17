@@ -9,6 +9,19 @@ class BitsoProcessor:
 		self.sqllite.create_tables()
 		self.bitso = Bitso()
 
+	def get_balance(self) -> list:
+		response = self.bitso.get_balance()
+
+		values: list = []
+		for currency in response['balances']:
+			if float(currency['total']) > 0.001:
+				values.append({
+					'currency': currency['currency'],
+					'amount' : currency['total']
+				})
+
+		return values
+
 	def set_currency(self, values: dict) -> Currency:
 		currency = Currency()
 		currency.set_price(values['price'])
@@ -45,7 +58,7 @@ class BitsoProcessor:
 			}
 		}
 
-	def table(self) -> Table:
+	def table_ticker(self) -> Table:
 		table_info = self.get_table_info()
 
 		last_price = float(table_info['last_price']['price'])
@@ -75,6 +88,19 @@ class BitsoProcessor:
 			self._to_percentage(percentage),
 			style="red" if change < 0 else "green"
 		)
+
+		return table
+
+	def table_balance(self) -> Table:
+		balances: list = self.get_balance()
+
+		table: Table = Table()
+
+		table.add_column("Currency")
+		table.add_column("Amount", style="green")
+
+		for balance in balances:
+			table.add_row(balance['currency'], balance['amount'])
 
 		return table
 
