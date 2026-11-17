@@ -1,7 +1,7 @@
 from classes import Datalog, BitsoProcessor
 from Exceptions import ApiException
 from rich.console import Console
-import notify2
+# import notify2
 
 logger = Datalog('backup.log')
 console = Console()

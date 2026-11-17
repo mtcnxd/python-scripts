@@ -16,7 +16,7 @@ class BitsoProcessor:
 		return currency
 
 	def current_price(self) -> str:
-		book_info = self.bitso.get_book_info("btc_usdt")
+		book_info = self.bitso.get_ticker("btc_usdt")
 		
 		if not book_info:
 			raise Exception("Bitso API error")
