@@ -11,16 +11,14 @@ class BitsoProcessor:
 
 	def get_balance(self) -> list:
 		response = self.bitso.get_balance()
-
-		values: list = []
-		for currency in response['balances']:
-			if float(currency['total']) > 0.001:
-				values.append({
-					'currency': currency['currency'],
-					'amount' : currency['total']
-				})
-
-		return values
+		return [
+			{
+				'currency': currency['currency'],
+				'amount' : currency['total']
+			}
+			
+			for currency in response['balances'] if float(currency['total']) > 0.001
+		]
 
 	def set_currency(self, values: dict) -> Currency:
 		currency = Currency()
