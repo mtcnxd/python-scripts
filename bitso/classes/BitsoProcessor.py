@@ -1,3 +1,4 @@
+from multiprocessing.util import log_to_stderr
 from classes import DataBaseLite, Bitso
 from rich.table import Table
 from datetime import datetime
@@ -9,16 +10,29 @@ class BitsoProcessor:
 		self.sqllite.create_tables()
 		self.bitso = Bitso()
 
+		# properties
+		self.ticker = self.bitso.get_ticker()
+
 	def get_balance(self) -> list:
 		response = self.bitso.get_balance()
-		return [
-			{
-				'currency': currency['currency'],
-				'amount' : currency['total']
-			}
-			
-			for currency in response['balances'] if float(currency['total']) > 0.001
-		]
+
+		result = []
+		for currency in response['balances']:
+			if float(currency['total']) > 0.001:
+				book_info = next(
+					(item for item in self.ticker if item['book'] == f"{currency['currency']}_mxn"), None
+				)
+
+				if book_info is None:
+					continue
+
+				result.append({
+					'currency': currency['currency'],
+					'amount' : currency['total'],
+					'value' : float(book_info['last']) * float(currency['total'])
+				})
+
+		return result
 
 	def set_currency(self, values: dict) -> Currency:
 		currency = Currency()
@@ -26,16 +40,15 @@ class BitsoProcessor:
 		currency.set_book(values['book'])
 		return currency
 
-	def current_price(self) -> str:
-		book_info = self.bitso.get_ticker("btc_usdt")
-		
-		if not book_info:
-			raise Exception("Bitso API error")
-
-		return book_info['last']
-
 	def get_table_info(self) -> dict:
-		current_price = self.current_price()
+		book_info = next(
+			(item for item in self.ticker if item['book'] == 'btc_usdt'), None
+		)
+
+		if book_info is None:
+			raise Exception("Response does not have selected book")
+
+		current_price = book_info['last']
 		last_price = self.sqllite.last()
 
 		self.sqllite.insert_data({
@@ -57,12 +70,12 @@ class BitsoProcessor:
 		}
 
 	def table_ticker(self) -> Table:
-		table_info = self.get_table_info()
+		table_info: dict = self.get_table_info()
 
 		last_price = float(table_info['last_price']['price'])
 		current_price = float(table_info['current_price']['price'])
 
-		table = Table()
+		table: Table = Table()
 
 		table.add_column("Name", style="dim")
 		table.add_column("Value")
@@ -96,9 +109,10 @@ class BitsoProcessor:
 
 		table.add_column("Currency")
 		table.add_column("Amount", style="green")
+		table.add_column("Value")
 
 		for balance in balances:
-			table.add_row(balance['currency'], balance['amount'])
+			table.add_row(balance['currency'], balance['amount'], self._to_currency(balance['value']))
 
 		return table
 
