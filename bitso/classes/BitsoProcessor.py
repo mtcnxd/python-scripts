@@ -1,17 +1,21 @@
 from multiprocessing.util import log_to_stderr
 from classes import DataBaseLite, Bitso
 from rich.table import Table
+from rich.panel import Panel
 from datetime import datetime
 from Protocols.Currency import Currency
 
 class BitsoProcessor:
 	def __init__(self):
 		self.sqllite = DataBaseLite()
-		self.sqllite.create_tables()
 		self.bitso = Bitso()
 
-		# properties
-		self.ticker = self.bitso.get_ticker()
+		# Create DB tables
+		self.sqllite.create_tables()
+
+		# Private Properties
+		self._ticker = self.bitso.get_ticker()
+		self._total = 0.0
 
 	def get_balance(self) -> list:
 		response = self.bitso.get_balance()
@@ -112,9 +116,13 @@ class BitsoProcessor:
 		table.add_column("Value")
 
 		for balance in balances:
+			self.total = self.total + float(balance['value'])
 			table.add_row(balance['currency'], balance['amount'], self._to_currency(balance['value']))
 
 		return table
+
+	def get_total(self) -> Panel:
+		return Panel(self._to_currency(self.total), title="Total", subtitle="Total Value of all Currencies")
 
 	def _to_currency(self, value: str) -> str:
 		converted = float(value)

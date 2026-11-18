@@ -15,6 +15,9 @@ def init():
 		balance = processor.table_balance()
 		console.print(balance)
 
+		total = processor.get_total()
+		console.print(total, style="green")
+
 		'''
 		console.print("SELECT OPTION:\n")
 		console.print("[1] Create currency")
