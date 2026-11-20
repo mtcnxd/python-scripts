@@ -1,6 +1,7 @@
 from classes import Datalog, BitsoProcessor
 from Exceptions import ApiException
 from rich.console import Console
+import traceback
 # import notify2
 
 logger = Datalog('backup.log')
@@ -57,7 +58,7 @@ def init():
 
 	except Exception as error:
 		logger.write(f"Global Error: {error}")
-		console.print(f"Something went wrong: {error}")
+		console.print(f"Something went wrong: {error}: {traceback.print_exc()}")
 
 	finally:
 		logger.close()

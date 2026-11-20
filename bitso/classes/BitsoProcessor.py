@@ -24,7 +24,7 @@ class BitsoProcessor:
 		for currency in response['balances']:
 			if float(currency['total']) > 0.001:
 				book_info = next(
-					(item for item in self.ticker if item['book'] == f"{currency['currency']}_mxn"), None
+					(item for item in self._ticker if item['book'] == f"{currency['currency']}_mxn"), None
 				)
 
 				if book_info is None:
@@ -46,7 +46,7 @@ class BitsoProcessor:
 
 	def get_table_info(self) -> dict:
 		book_info = next(
-			(item for item in self.ticker if item['book'] == 'btc_usdt'), None
+			(item for item in self._ticker if item['book'] == 'btc_usdt'), None
 		)
 
 		if book_info is None:
@@ -116,13 +116,13 @@ class BitsoProcessor:
 		table.add_column("Value")
 
 		for balance in balances:
-			self.total = self.total + float(balance['value'])
+			self._total = self._total + float(balance['value'])
 			table.add_row(balance['currency'], balance['amount'], self._to_currency(balance['value']))
 
 		return table
 
 	def get_total(self) -> Panel:
-		return Panel(self._to_currency(self.total), title="Total", subtitle="Total Value of all Currencies")
+		return Panel(self._to_currency(self._total), title="Total", subtitle="Total Value of all Currencies")
 
 	def _to_currency(self, value: str) -> str:
 		converted = float(value)
